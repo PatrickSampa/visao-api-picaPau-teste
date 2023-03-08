@@ -19,10 +19,11 @@ import { coletarArvoreDeDocumentoDoPassivo } from './coletarArvoreDeDocumentoDoP
 import { getCapaDoPassivaUseCase } from '../GetCapaDoPassiva';
 import { correçaoDoErroDeFormatoDoSapiens } from '../../helps/CorreçaoDoErroDeFormatoDoSapiens';
 import { formatoNomeAdvogadoPilantra } from '../../helps/formatoNomeAdvogadoPilantra';
-import { advogadoPilantra } from '../../helps/advogadoPilantra';
-import { calcIdade } from '../../helps/calcularIdade';
+//import { advogadoPilantra } from '../GetInformationCapa/advogadoPilantra';
+//import { calcIdade } from '../GetInformationCapa/VerificarIdade';
 import { litispedencia } from '../../helps/verificarLitispedencia';
 import { da } from 'date-fns/locale';
+import { IdentificarAdvogadoPilantra, VerificarIdadeCapa } from '../GetInformationCapa/GetInformationCapaForPicaPau';
 
 export class GetInformationFromSapienForSamirUseCase {
 
@@ -104,14 +105,22 @@ export class GetInformationFromSapienForSamirUseCase {
 
 
                     //Estrutura para identificar advogados**                 
-                    let capaHTML = (await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie));
+                   /*  let capaHTML = (await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie));
                     let capaFormatada = new JSDOM(capaHTML);                   
                     const nomeAdvogado: string = "/html/body/div/div[6]/table/tbody/tr[3]/td[1]/div/text()";
                     const nomeFormatado: string = formatoNomeAdvogadoPilantra(correçaoDoErroDeFormatoDoSapiens(getXPathText(capaFormatada, nomeAdvogado)));
                     const teste2 = correçaoDoErroDeFormatoDoSapiens(getXPathText(capaFormatada, nomeAdvogado));
                     if(advogadoPilantra(nomeFormatado)){
                         response2.push("IMPEDITIVO ADVOGADO")
+                    } */
+
+
+                    
+                    const procurarAdvogadoPilantraCapa: boolean = IdentificarAdvogadoPilantra((await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie)));
+                    if(!procurarAdvogadoPilantraCapa){
+                        response2.push("IMPEDITIVO ADVOGADO");
                     }
+
 
 
 
@@ -123,7 +132,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
 
                     //Calcular idade;
-                    const dataNascXpath: string = "/html/body/div/div[1]/table/tbody/tr[8]/td/text()";
+                    /* const dataNascXpath: string = "/html/body/div/div[1]/table/tbody/tr[8]/td/text()";
                     const dataAjuizXpath: string = "/html/body/div/div[1]/table/tbody/tr[2]/td";
                     const generoXptah: string = "/html/body/div/div[1]/table/tbody/tr[11]/td"
                     const dataAjuizFormatado: string = correçaoDoErroDeFormatoDoSapiens(getXPathText(parginaDosPrevFormatada, dataAjuizXpath));
@@ -133,8 +142,14 @@ export class GetInformationFromSapienForSamirUseCase {
                     if(!funcIdade){
                         response2.push("IMPEDITIVO IDADE")
                         //console.log("Entrou no if do impeditivo")
+                    } */
+
+                    const verificarIdade:boolean = VerificarIdadeCapa(parginaDosPrevFormatada)
+                    if(!verificarIdade){
+                        response2.push("IMPEDITIVO IDADE")
                     }
                     
+
 
                 
                 
