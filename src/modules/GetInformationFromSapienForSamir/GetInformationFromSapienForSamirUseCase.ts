@@ -23,7 +23,8 @@ import { formatoNomeAdvogadoPilantra } from '../../helps/formatoNomeAdvogadoPila
 //import { calcIdade } from '../GetInformationCapa/VerificarIdade';
 import { litispedencia } from '../../helps/verificarLitispedencia';
 import { da } from 'date-fns/locale';
-import { IdentificarAdvogadoPilantra, VerificarIdadeCapa } from '../GetInformationCapa/GetInformationCapaForPicaPau';
+import {impedimentosCapa } from '../GetInformationCapa';
+//import { IdentificarAdvogadoPilantra, VerificarIdadeCapa } from '../GetInformationCapa/GetInformationCapaForPicaPau';
 
 export class GetInformationFromSapienForSamirUseCase {
 
@@ -37,7 +38,7 @@ export class GetInformationFromSapienForSamirUseCase {
         const usuario_id = `${usuario[0].id}`;
 
         let response: Array<IInformationsForCalculeDTO> = [];
-        let response2: Array<string> = [];
+        
         try {
             const tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
 
@@ -104,26 +105,17 @@ export class GetInformationFromSapienForSamirUseCase {
 
 
 
-                    //Estrutura para identificar advogados**                 
-                   /*  let capaHTML = (await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie));
-                    let capaFormatada = new JSDOM(capaHTML);                   
-                    const nomeAdvogado: string = "/html/body/div/div[6]/table/tbody/tr[3]/td[1]/div/text()";
-                    const nomeFormatado: string = formatoNomeAdvogadoPilantra(correçaoDoErroDeFormatoDoSapiens(getXPathText(capaFormatada, nomeAdvogado)));
-                    const teste2 = correçaoDoErroDeFormatoDoSapiens(getXPathText(capaFormatada, nomeAdvogado));
-                    if(advogadoPilantra(nomeFormatado)){
-                        response2.push("IMPEDITIVO ADVOGADO")
+                    
+                   /*  const procurarAdvogadoPilantraCapa: boolean = IdentificarAdvogadoPilantra((await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie)));
+                    if(!procurarAdvogadoPilantraCapa){
+                        response2.push("IMPEDITIVO ADVOGADO");
                     } */
 
 
+
+                    let impedCapa: Array<String> = await impedimentosCapa.Impedimentos((await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie)), parginaDosPrevFormatada);
+                    let responseForPicaPau: Array<String> = [...impedCapa];
                     
-                    const procurarAdvogadoPilantraCapa: boolean = IdentificarAdvogadoPilantra((await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie)));
-                    if(!procurarAdvogadoPilantraCapa){
-                        response2.push("IMPEDITIVO ADVOGADO");
-                    }
-
-
-
-
 
 
 
@@ -144,10 +136,10 @@ export class GetInformationFromSapienForSamirUseCase {
                         //console.log("Entrou no if do impeditivo")
                     } */
 
-                    const verificarIdade:boolean = VerificarIdadeCapa(parginaDosPrevFormatada)
+                    /* const verificarIdade:boolean = VerificarIdadeCapa(parginaDosPrevFormatada)
                     if(!verificarIdade){
                         response2.push("IMPEDITIVO IDADE")
-                    }
+                    } */
                     
 
 
@@ -156,14 +148,14 @@ export class GetInformationFromSapienForSamirUseCase {
 
 
                      //Verificar litispedência                                                       
-                    const xpathRelacaoProcesso = "/html/body/div/div[2]/table/tbody/tr[2]/td";                   
+                    /* const xpathRelacaoProcesso = "/html/body/div/div[2]/table/tbody/tr[2]/td";                   
                     const xpathRelacaoProcessoFormatada: string = (getXPathText(parginaDosPrevFormatada, xpathRelacaoProcesso).trim());
                     const StringParaVerificar: string = "Não há relação dos processos movidos pelo autor contra o INSS.";
                     const xpathRelacaoProcessoMovidosFormatada:boolean = xpathRelacaoProcessoFormatada===StringParaVerificar;
                     if(!xpathRelacaoProcessoMovidosFormatada){   
                             response2.push("IMPEDITIVO LITISPÊNDENCIA")
                                              
-                    }
+                    } */
                 
 
 
@@ -194,10 +186,10 @@ export class GetInformationFromSapienForSamirUseCase {
 
                     
                     //verificar segurado codigo 2.0
-                    const procurarVariavelSeguradoEspecial: number = parginaDosPrev.indexOf("SEGURADO_ESPECIAL");
+                    /* const procurarVariavelSeguradoEspecial: number = parginaDosPrev.indexOf("SEGURADO_ESPECIAL");
                     if(procurarVariavelSeguradoEspecial !== -1){
                         response2.push("CONCESSÃO ANTERIOR")
-                    }
+                    } */
 
                     
 
@@ -260,20 +252,21 @@ export class GetInformationFromSapienForSamirUseCase {
  */
 //console.log(response2)
                 
-                if(response2.length==0){
+                if(responseForPicaPau.length==0){
                     await updateEtiquetaUseCase.execute({cookie, etiqueta: "processo limpo", tarefaId});
                 }else{
                     let etiquetaFinal = "";
-                    for(let j = 0; j<response2.length; j++){
-                        etiquetaFinal += response2[j] + " \n";
+                    for(let j = 0; j<responseForPicaPau.length; j++){
+                        etiquetaFinal += responseForPicaPau[j] + " -\n";
 
                     }
                     await updateEtiquetaUseCase.execute({cookie, etiqueta: `${etiquetaFinal}`, tarefaId});
+                    console.log(etiquetaFinal)
 
                 }
 
 
-                response2 = [];
+                responseForPicaPau = [];
             }
             return await response
         } catch (error) {
