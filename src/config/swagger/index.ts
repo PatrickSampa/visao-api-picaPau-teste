@@ -26,6 +26,10 @@ export const swaggerDefinition = {
     },
     servers: [
       {
+        url: "https://picapau-testeserver.onrender.com/",
+        description: 'Render server',
+      },
+      {
         url: urlAPI,
         description: 'Development server',
       },
