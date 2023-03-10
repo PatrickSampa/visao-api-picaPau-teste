@@ -1,10 +1,9 @@
 import { app } from "./app";
 import dotenv from 'dotenv';
 
-const port = process.env.PORT || 3000;
-
-
+dotenv.config();
+const PORT = process.env.API_PORT;
 
 app.get('/', (req, res) => res.send('Hello World 100!'))
 
-app.listen(port, () => console.log("Visao runing in PORT " + port));
+app.listen(PORT, () => console.log("Visao runing in PORT " + PORT));

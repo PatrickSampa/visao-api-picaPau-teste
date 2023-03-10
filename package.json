@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "check-dependencies": "depcheck",
-    "serve": "tsnd --transpile-only --respawn --ignore-watch node_modules src/server.ts",
+    "serve": "pip install requests bs4 && tsnd --transpile-only --respawn --ignore-watch node_modules src/server.ts",
     "start:docker:dev": "yarn && tsnd --transpile-only --respawn --ignore-watch node_modules src/server.ts"
   },
   "dependencies": {
