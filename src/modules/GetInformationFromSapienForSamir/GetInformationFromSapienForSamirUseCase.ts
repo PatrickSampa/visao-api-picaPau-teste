@@ -113,7 +113,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
 
 
-                    let impedCapa: Array<String> = await impedimentosCapa.Impedimentos((await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie)), parginaDosPrevFormatada);
+                    let impedCapa: Array<String> = await impedimentosCapa.Impedimentos(await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie));
                     let responseForPicaPau: Array<String> = [...impedCapa];
                     
 

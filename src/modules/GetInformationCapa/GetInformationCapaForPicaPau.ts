@@ -1,15 +1,15 @@
 import { advogados } from "./GetInformationAdvogadoPilantra";
 import { Advogados } from "./GetInformationAdvogadoPilantra/advogadoPilantra";
-import { calcularIdade } from "./GetInformationIdade";
-import { CalcularIdade } from "./GetInformationIdade/calcularIdade";
+/* import { calcularIdade } from "./GetInformationIdade";
+import { CalcularIdade } from "./GetInformationIdade/calcularIdade"; */
 import { identificarCidade } from "./GetInformationCidade";
 import { IdentificarCidade } from "./GetInformationCidade/cidadeCompetencia";
 
 
 
 export class InformationForPicaPau{
-    constructor(advogadosObj: Advogados, calcularIdade: CalcularIdade, identificarCidades: IdentificarCidade){};
-    async Impedimentos(capaHTML: any, parginaDosPrevFormatada: any): Promise<Array<String>>{
+    constructor(advogadosObj: Advogados, identificarCidades: IdentificarCidade){};
+    async Impedimentos(capaHTML: any): Promise<Array<String>>{
         const arrayImpedimentos = [];
         //Estrutura para identificar nome dos Advogados
         const verificarAdvogadoBoolean = await advogados.AdvogadoPilantra(capaHTML);
@@ -19,11 +19,11 @@ export class InformationForPicaPau{
 
 
 
-        //Estrutura para identificar a idade
+        /* //Estrutura para identificar a idade
         const verificarIdade = await calcularIdade.calcIdade(parginaDosPrevFormatada);
         if(!verificarIdade){
             arrayImpedimentos.push("IMPEDITIVO IDADE")
-        } 
+        }  */
 
 
 
